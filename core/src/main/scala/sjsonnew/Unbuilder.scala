@@ -148,7 +148,7 @@ class Unbuilder[J](facade: Facade[J]) {
       case x => stateError(x)
     }
 
-  def nextField(): (String, J) =
+  def nextField(): (String, Option[J]) =
     state match {
       case InObject =>
         contexts.head match {
@@ -158,7 +158,7 @@ class Unbuilder[J](facade: Facade[J]) {
       case x => stateError(x)
     }
 
-  def nextFieldWithJString(): (J, J) = nextField match { case (k, v) => (facade.jstring(k), v) }
+  def nextFieldWithJString(): (J, Option[J]) = nextField match { case (k, v) => (facade.jstring(k), v) }
 
   def lookupField(name: String): Option[J] =
     state match {
@@ -221,9 +221,9 @@ private[sjsonnew] object UnbuilderContext {
     private val size = names.size
     private var idx: Int = 0
     def hasNext: Boolean = idx < size
-    def next: (String, J) = {
+    def next: (String, Option[J]) = {
       val name = names(idx)
-      val x = fields(names(idx))
+      val x = fields get names(idx)
       idx = idx + 1
       (name, x)
     }
